@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { ArrowUpRight, Maximize2, Minimize2, Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import bg from "@/assets/kirana-street.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -64,8 +64,29 @@ function KiranaPage() {
   const [time, setTime] = useState({ cur: 0, dur: 0 });
   const [rings, setRings] = useState<{ id: number; x: number; y: number }[]>([]);
   const [onlineCount, setOnlineCount] = useState(40);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const playerRef = useRef<YTPlayer | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch((err) => console.error(err));
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().then(() => setIsFullscreen(false));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => setQuote((q) => (q + 1) % QUOTES.length), 5000);
@@ -101,12 +122,31 @@ function KiranaPage() {
     let raf: number;
     const readTrack = () => {
       const d = playerRef.current?.getVideoData();
-      if (d?.title)
-        setTrack({
-          title: d.title,
-          artist: d.author || "बॉलीवुड सदाबहार",
-          thumb: d.video_id ? `https://i.ytimg.com/vi/${d.video_id}/mqdefault.jpg` : "",
-        });
+      if (d?.title) {
+        const title = d.title;
+        const artist = d.author || "बॉलीवुड सदाबहार";
+        const thumb = d.video_id ? `https://i.ytimg.com/vi/${d.video_id}/mqdefault.jpg` : "";
+        setTrack({ title, artist, thumb });
+
+        if ("mediaSession" in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title,
+            artist,
+            album: "अमित जनरल स्टोर",
+            artwork: [
+              { src: thumb || "/favicon.png", sizes: "512x512", type: "image/jpeg" },
+            ],
+          });
+          try {
+            navigator.mediaSession.setActionHandler("play", () => playerRef.current?.playVideo());
+            navigator.mediaSession.setActionHandler("pause", () => playerRef.current?.pauseVideo());
+            navigator.mediaSession.setActionHandler("previoustrack", () => playerRef.current?.previousVideo());
+            navigator.mediaSession.setActionHandler("nexttrack", () => playerRef.current?.nextVideo());
+          } catch (e) {
+            // Ignore unsupported media session actions on older browsers
+          }
+        }
+      }
     };
     const init = () => {
       const YT = (window as unknown as { YT?: any }).YT;
@@ -269,15 +309,39 @@ function KiranaPage() {
               <span className="hidden text-emerald-400/80 sm:inline">• दुकान पर हैं</span>
             </div>
           </div>
-          <a
-            href={`https://www.youtube.com/playlist?list=${PLAYLIST_ID}`}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="ml-auto inline-flex shrink-0 items-center gap-1.5 text-foreground/80 transition-colors hover:text-foreground"
-          >
-            YT Music <ArrowUpRight className="size-4" />
-          </a>
+          <div className="ml-auto flex items-center gap-2.5">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFullscreen();
+              }}
+              title={isFullscreen ? "सामान्य स्क्रीन (Exit Fullscreen)" : "फुल स्क्रीन (Fullscreen)"}
+              aria-label="Fullscreen toggle"
+              className="glass group flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-foreground/90 transition-all duration-300 hover:scale-105 hover:bg-white/10 active:scale-95 shadow-[0_4px_20px_rgba(0,0,0,0.35)] border border-white/20"
+            >
+              {isFullscreen ? (
+                <>
+                  <Minimize2 className="size-3.5 text-amber-300 transition-transform group-hover:scale-110" />
+                  <span className="hidden sm:inline text-amber-200">नॉर्मल</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="size-3.5 text-amber-200 transition-transform group-hover:scale-110" />
+                  <span className="hidden sm:inline">फुल स्क्रीन</span>
+                </>
+              )}
+            </button>
+
+            <a
+              href={`https://www.youtube.com/playlist?list=${PLAYLIST_ID}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex shrink-0 items-center gap-1.5 text-foreground/80 transition-colors hover:text-foreground"
+            >
+              YT Music <ArrowUpRight className="size-4" />
+            </a>
+          </div>
         </header>
 
         {/* Center */}
