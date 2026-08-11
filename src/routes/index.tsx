@@ -117,7 +117,12 @@ function KiranaPage() {
           playsinline: 1,
         },
         events: {
-          onReady: () => setReady(true),
+          onReady: () => {
+            setReady(true);
+            const d = playerRef.current?.getVideoData();
+            if (d?.title) setTrack({ title: d.title, artist: d.author || "बॉलीवुड सदाबहार" });
+          },
+
           onStateChange: (e: { data: number }) => {
             setPlaying(e.data === 1);
             const d = playerRef.current?.getVideoData();
