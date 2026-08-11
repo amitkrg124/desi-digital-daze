@@ -66,7 +66,19 @@ function KiranaPage() {
   const [onlineCount, setOnlineCount] = useState(40);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const playerRef = useRef<YTPlayer | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (playing) {
+      video.muted = true;
+    } else {
+      video.muted = false;
+      video.play().catch(() => {});
+    }
+  }, [playing]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -250,6 +262,7 @@ function KiranaPage() {
     >
       {/* Background Video */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
