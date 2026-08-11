@@ -18,26 +18,13 @@ The website should include:
 - Make it feel modern, minimal, cinematic, and deeply nostalgic. Avoid generic stock-website styling
 
 Additional instructions from the user: use the same attached image as the website's background, and keep the UI looking like the attached reference image (layout/composition should stay similar). The UI should be in a red tone, 90s vibe, not an AI-style dual-tone color scheme. Reference website for the overall style: https://saloon.wtf/
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://desi-digital-daze.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/873ac99f-6571-4d36-be81-a0be6481ba03).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Prefer working locally? You need Node.js and npm.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
+git clone https://github.com/amitkrg124/desi-digital-daze.git
+cd desi-digital-daze
 npm i
 npm run dev
 ```
