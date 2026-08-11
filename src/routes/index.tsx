@@ -65,6 +65,7 @@ function KiranaPage() {
   const [rings, setRings] = useState<{ id: number; x: number; y: number }[]>([]);
   const [onlineCount, setOnlineCount] = useState(40);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const playerRef = useRef<YTPlayer | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -74,11 +75,17 @@ function KiranaPage() {
     if (!video) return;
     if (playing) {
       video.muted = true;
-    } else {
+    } else if (hasInteracted) {
       video.muted = false;
+      video.play().catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+      });
+    } else {
+      video.muted = true;
       video.play().catch(() => {});
     }
-  }, [playing]);
+  }, [playing, hasInteracted]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -235,6 +242,7 @@ function KiranaPage() {
   }, []);
 
   const toggle = useCallback(() => {
+    setHasInteracted(true);
     const p = playerRef.current;
     if (!p) return;
     if (playing) p.pauseVideo();
