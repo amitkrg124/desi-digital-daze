@@ -194,12 +194,19 @@ function KiranaPage() {
       className="relative h-[100svh] w-full overflow-hidden"
       onClick={(e) => bell(e.clientX, e.clientY)}
     >
-      {/* Background */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${bg.url})`, animation: "flicker 7s ease-in-out infinite" }}
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={bg.url}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        style={{ animation: "flicker 7s ease-in-out infinite" }}
         aria-hidden
-      />
+      >
+        <source src="/animated-bgv.mp4" type="video/mp4" />
+      </video>
       <div
         className="pointer-events-none absolute inset-0"
         style={{
