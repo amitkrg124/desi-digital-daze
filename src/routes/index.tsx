@@ -63,12 +63,26 @@ function KiranaPage() {
   });
   const [time, setTime] = useState({ cur: 0, dur: 0 });
   const [rings, setRings] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [onlineCount, setOnlineCount] = useState(40);
   const playerRef = useRef<YTPlayer | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     const t = setInterval(() => setQuote((q) => (q + 1) % QUOTES.length), 5000);
     return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setOnlineCount((prev) => {
+        const delta = Math.floor(Math.random() * 5) - 2;
+        const next = prev + delta;
+        if (next < 32) return 34;
+        if (next > 54) return 50;
+        return next;
+      });
+    }, 4500);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -243,12 +257,18 @@ function KiranaPage() {
 
       <div className="relative z-10 flex h-full flex-col">
         {/* Top bar */}
-        <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-4 text-sm sm:grid-cols-3 sm:px-10 sm:py-6">
+        <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 text-sm sm:grid-cols-3 sm:px-10 sm:py-6">
           <p className="min-w-0 truncate tracking-[0.18em] text-foreground/80">{clock}</p>
-          <p className="hidden items-center justify-center gap-2 text-foreground/70 sm:flex">
-            <span className="size-2 shrink-0 rounded-full bg-accent shadow-[0_0_10px_var(--accent)]" />
-            किराना • 2003
-          </p>
+          <div className="flex items-center justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/50 px-3 py-1 text-xs text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)] backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+              </span>
+              <span className="font-semibold tracking-wide">{onlineCount} online</span>
+              <span className="hidden text-emerald-400/80 sm:inline">• दुकान पर हैं</span>
+            </div>
+          </div>
           <a
             href={`https://www.youtube.com/playlist?list=${PLAYLIST_ID}`}
             target="_blank"
