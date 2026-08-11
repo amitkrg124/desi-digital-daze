@@ -337,10 +337,11 @@ function KiranaPage() {
               className="mt-10 border-l-2 border-primary/70 pl-4"
               style={{ animation: "quote-in 0.6s ease-out" }}
             >
-              <p className="font-display text-xl italic">“{QUOTES[quote].hi}”</p>
+              <p className="font-display text-xl italic">“{QUOTES[quote]?.hi}”</p>
               <p className="mt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {QUOTES[quote].en}
+                {QUOTES[quote]?.en}
               </p>
+
             </div>
 
             {/* Shelf labels */}
