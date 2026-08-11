@@ -31,8 +31,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
-  --font-display: "Tiro Devanagari Hindi", serif;
-  --font-body: "Mukta", system-ui, sans-serif;
+  --font-display: "Baloo 2", "Mukta", system-ui, sans-serif;
+  --font-body: "DM Sans", "Mukta", system-ui, sans-serif;
+
 }
 
 :root {
